@@ -4,24 +4,30 @@ import"./Owned.sol";
 
 contract Pausable is Owned {
 
-    bool public status;
+    bool private running;
+
+    event LogPausedContract(address indexed contractPauser);
+    event LogResumedContract(address indexed contractResumer);
+
 
     constructor() public {
-        status = true;
+        running = true;
     }
 
     modifier isActive() {
-        require(status == true);
+        require(running == true);
         _;
     }
 
     function pauseContract() public onlyOwner returns(bool success) {
-        status = false;
+        running = false;
+        emit LogPausedContract(msg.sender);
         return true;
     }
 
     function resumeContract() public onlyOwner returns(bool success) {
-        status = true;
+        running = true;
+        emit LogResumedContract(msg.sender);
         return true;
     }
   }
